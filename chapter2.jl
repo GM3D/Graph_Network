@@ -881,77 +881,127 @@ end
 
 function test2()
 
+    # テキスト p. 26 図2.1の有向グラフ
     e1 = [(1, 2), (1, 5), (2, 6), (6, 5), (4, 1), (5, 4), (3, 6),
           (2, 3), (3, 4)]
+    # エッジリストからオブジェクト生成
     g1 = DirectedGraph(e1)
+    # 再帰版深さ優先探索によるラベル付け
     assert(dfs_recursive!(g1) == [1, 2, 6, 5, 4, 3])
+    # スタック版深さ優先探索によるラベル付け
+    # オプションを指定しなければラベル付けの順番は先行順
     assert(dfs_stack!(g1) == [1, 2, 6, 5, 4, 3])
+    # キュー版幅優先探索によるラベル付け
     assert(bfs!(g1) == [1, 2, 5, 6, 3, 4])
+    # 閉路検出
+    # detect_loops関数は見つかった閉路のリストを返すので、それが空かどうかを
+    # 見れば閉路があるかどうかがわかる。
+    # アルゴリズムの性質上、すべての閉路が検出されるわけではないが、グラフが
+    # 閉路を持つかどうかは正しく判定できる。
     assert(!isempty(detect_loops(g1)))
-    
+
+    # テキスト p. 29 図2.2の有向グラフ    
     e2 = [(1, 2), (2, 3), (3, 4), (4, 2), (1, 8), (8, 7), (8, 2),
           (7, 2), (7, 4), (5, 4), (7, 5), (5, 6), (6, 7), (8, 9),
           (9, 10), (9, 1), (1, 10), (10, 8), (1, 3)]
     g2 = DirectedGraph(e2)
     assert(dfs_recursive!(g2) == [1, 2, 3, 4, 7, 8, 6, 5, 9, 10])
     assert(dfs_stack!(g2) == [1, 2, 3, 4, 7, 8, 6, 5, 9, 10])
+    # スタック版深さ優先探索、後行順によるラベル付け
     assert(dfs_stack!(g2, order=postorder) == [10, 3, 2, 1, 5, 4, 6, 9, 8, 7])
     assert(bfs!(g2) == [1, 2, 5, 8, 9, 10, 6, 3, 7, 4])
+    # ループあり
     assert(!isempty(detect_loops(g2)))
+    # 最短経路探索
+    # スタートとゴールが同一頂点vpであれば単にリスト[p, p]が返る
     assert(shortest_path(g2, 4, 4) == [4, 4])
+    # v9からv5への最短経路
     assert(shortest_path(g2, 9, 5) == [9, 10, 8, 7, 5])
+    # 有向グラフなので逆向きにはたどれない。経路がない場合空リストが返る
     assert(shortest_path(g2, 5, 9) == [])
-    
+
+    # テキスト p. 38 図2.7の無向グラフ
     e3 = [(1, 2), (2, 3), (1, 4), (3, 5), (2, 5), (3, 4), (4, 5)]
     u3 = UndirectedGraph(e3)
+    # 深さ優先探索 (p. 39 図2.8参照)
     assert(dfs_recursive!(u3) == [1, 2, 3, 5, 4])
     assert(dfs_stack!(u3) == [1, 2, 3, 5, 4])
+    # 幅優先探索 (p. 39 図2.8参照)
     assert(bfs!(u3) == [1, 2, 4, 3, 5])
     assert(!isempty(detect_loops(u3)))
     
+    # テキスト p. 43 図2.9の無向グラフ
     e4 = [(1, 2), (1, 3), (1, 4), (3, 5), (5, 6), (3, 6), (5, 7), (2, 3),
           (2, 4), (2, 8), (2, 9), (8, 9), (4, 10), (10, 11), (4, 11), (4, 12)]
     u4 = UndirectedGraph(e4)
+    # 深さ優先探索、再帰
     assert(dfs_recursive!(u4) == [1, 2, 3, 7, 4, 5, 6, 11, 12, 8, 9, 10])
+    # 深さ優先探索、スタック
     assert(dfs_stack!(u4) == [1, 2, 3, 7, 4, 5, 6, 11, 12, 8, 9, 10])
+    # 深さ優先探索、スタック、後行順
     assert(dfs_stack!(u4, order=postorder) ==
            [12, 11, 4, 8, 3, 1, 2, 10, 9, 6, 5, 7])
+    # 幅優先探索
     assert(bfs!(u4) == [1, 2, 3, 4, 7, 8, 12, 5, 6, 9, 10, 11])
+    # 閉路検出
     assert(!isempty(detect_loops(u4)))
+    # 連結成分のカウント
     assert(dfs_stack!(u4, count_components=true)[1] == 1)
+    # 最短経路検出
     assert(shortest_path(u4, 5, 9) == [5, 3, 2, 9])
+    # 無向グラフなので逆順にもたどれる
+    assert(shortest_path(u4, 9, 5) == [9, 2, 3, 5])
     assert(shortest_path(u4, 2, 2) == [2, 2])
     
     p = shortest_path(u4, 10, 6)
-    # there are 2 possible shortest paths in this case.
-    # finding either one is regarded as correct behavior.
+    # 最短の経路が二つある場合、どちらが返るかは初期データでのエッジの
+    # 番号付けその他に依存する
     assert(p == [10, 4, 1, 3, 6] || p == [10, 4, 2, 3, 6])
 
+    # シンプルな三角形、ただし一周できない有向グラフ
     e5 = [(1, 2), (2, 3), (1, 3)]
     g5 = DirectedGraph(e5)
+    # 有向グラフの意味での閉路は存在しない
     assert(detect_loops(g5) == [])
+    # 有向グラフの向き付けを無視して無向グラフに変換
     u5 = UndirectedGraph(e5)
+    # 無向グラフとしては閉路を持つ
     assert(!isempty(detect_loops(u5)))
 
+    # 同じく三角形だがこちらは一周できる
     e6 = [(1, 2), (2, 3), (3, 1)]
     g6 = DirectedGraph(e6)
+    # 有向、無向どちらでも閉路を持つ
     assert(detect_loops(g6) != [])
     u6 = UndirectedGraph(e6)
     assert(!isempty(detect_loops(u6)))
 
-    # non-overlapping sum of e3, e5, e6, with verts renumbered
-    # so that there is no unused vert number.
+    # 前出の e3にe5、e6を頂点番号が重ならないように変更して追加したグラフ。
+    # つまり3つの連結成分を持つ
     e7 = [(1, 2), (2, 3), (1, 4), (3, 5), (2, 5), (3, 4), (4, 5),
       (6, 7), (7, 8), (8, 6), (9, 10), (10, 11), (12, 11)]
     u7 = UndirectedGraph(e7)
+    # count_componentsオプションをtrueにしてdfs_stack!を呼ぶと
+    # (連結成分数、頂点ラベルのリスト）のタプルを返すので
+    # 第一成分を見れば連結成分数がわかる。
     assert(dfs_stack!(u7, count_components=true)[1] == 3)
 
-    e8 = [(1, 2), (2, 3), (1, 4), (3, 5), (2, 5), (3, 4), (4, 5)]
+    # 同じく p. 47 図2.12の無向グラフによる連結成分数カウント
+    e8 = [(1, 2), (1, 3), (3, 4), (2, 4), (2, 5), (2, 6), (5, 6),
+          (7, 8), (7, 9), (7, 10), (7, 11), (8, 9), (10, 11),
+          (12, 14), (12, 15), (13, 14), (14, 15), (15, 16)]
     u8 = UndirectedGraph(e8)
-    assert(bfs!(u8) == [1, 2, 4, 3, 5])
+    assert(dfs_stack!(u8, count_components=true)[1] == 3)
+    
 end
 
+# 幅優先探索、深さ優先探索がO(n+m)で実行されることのテスト
+# 注意: 実行時間は実行中にガベージコレクションが起きたかどうかに大幅に依存する
+# たとえばガベージコレクションが90%を占めると表示された場合、実際の実行時間より
+# 10倍の時間が表示されていることになる。
+# 今のところ、高速化についての検討は一切していない。
 function test2_1()
+    # n, m を同時に 10^1 から 10^6まで変化させて実行時間を計測
     imax = 6
     graphs1 = [DirectedGraph(10^i, 10^i) for i in 1:imax]
     println("breadth first search")
@@ -970,7 +1020,8 @@ function test2_1()
         @time dfs_stack!(graphs1[i])
     end
 end
-    
+
+test2()
 #test2_1()
 
 # e2 = [(1, 2), (2, 3), (3, 4), (4, 2), (1, 8), (8, 7), (8, 2),
