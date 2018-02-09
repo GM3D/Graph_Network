@@ -24,4 +24,6 @@ plot_test1.jl
 
 まで実装してあります。
 
+# How to use
+chpater2.jlの末尾のtest2()、test2_1()内のコメントをテキストとともに参照してください。
 
