@@ -25,5 +25,6 @@ plot_test1.jl
 まで実装してあります。
 
 # How to use
-chpater2.jlの末尾のtest2()、test2_1()内のコメントをテキストとともに参照してください。
+* chpater2.jlの末尾のtest2()、test2_1()内のコメントをテキストとともに参照してください。
+* bfs!()、dfs_recursive!()、dfs_stack!()の各関数はオプション引数で"debug=true"を指定すると（うるさいくらい）アルゴリズムの実行手順が表示されます。
 
