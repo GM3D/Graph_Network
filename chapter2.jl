@@ -56,7 +56,7 @@ function dfs_recursive!(g::UndirectedGraph; debug=false)
     return labels
 end
 
-function dfs_recursive!(g::DirectedGraph, debug=false)
+function dfs_recursive!(g::DirectedGraph; debug=false)
     dprint(args...) = debug ? println(args...) : Void
     dprint("starting recursive depth first search")
     labels = repmat([0], g.n)
@@ -111,7 +111,7 @@ function dfs_stack!(g::UndirectedGraph;
     visited_vertices = repmat([false], g.n)
     visited_edges = repmat([false], g.m)
     label = 1
-    stack = []
+    stack = Int[]
     components = 0
     str_stack() = "[" * join(["v$v" for v in reverse(stack)], ", ") * "]"
 
@@ -210,7 +210,7 @@ function dfs_stack!(g::DirectedGraph; order=preorder, debug=false)
     visited_vertices = repmat([false], g.n)
     visited_edges = repmat([false], g.m)
     label = 1
-    stack = []
+    stack = Int[]
     str_stack() = "[" * join(["v$v" for v in reverse(stack)], ", ") * "]"
 
     function spush(v)
@@ -302,7 +302,7 @@ function bfs!(g::UndirectedGraph; debug=false)
     visited_edges = repmat([false], g.m)
     label = 1 # current label
     labels = repmat([0], g.n)
-    queue = [] # search queue
+    queue = Int[] # search queue
     depth = 0 # current depth
     depths = repmat([0], g.n) # depth for each vertex
     str_queue() = "[" * join(["v$v" for v in reverse(queue)], ", ") * "]"
@@ -391,7 +391,7 @@ function shortest_path(g::UndirectedGraph, s::Int, t::Int; debug=false)
     visited_edges = repmat([false], g.m)
     label = 1 # current label
     labels = repmat([0], g.n)
-    queue = [] # search queue
+    queue = Int[] # search queue
     parents = repmat([0], g.n)
     depth = 0 # current depth
     depths = repmat([0], g.n) # depth for each vertex
@@ -495,7 +495,7 @@ function shortest_path(g::DirectedGraph, s::Int, t::Int; debug=false)
     visited_edges = repmat([false], g.m)
     label = 1 # current label
     labels = repmat([0], g.n)
-    queue = [] # search queue
+    queue = Int[] # search queue
     parents = repmat([0], g.n)
     depth = 0 # current depth
     depths = repmat([0], g.n) # depth for each vertex
@@ -598,7 +598,7 @@ function bfs!(g::DirectedGraph; debug=false)
     visited_edges = repmat([false], g.m)
     label = 1 # current label
     labels = repmat([0], g.n)
-    queue = [] # search queue
+    queue = Int[] # search queue
     depth = 0 # current depth
     depths = repmat([0], g.n) # depth for each vertex
     str_queue() = "[" * join(["v$v" for v in reverse(queue)], ", ") * "]"
@@ -686,9 +686,9 @@ function detect_loops(g::UndirectedGraph; debug=false)
     visited_vertices = repmat([false], g.n)
     visited_edges = repmat([false], g.m)
     label = 1
-    stack = []
+    stack = Int[]
     in_stack = repmat([false], g.n)
-    loops = []
+    loops = Array{Int, 1}[]
     str_stack() = "[" * join(["v$v" for v in reverse(stack)], ", ") * "]"
     str_loop(l) = "{" * join(["v$v" for v in l], " -> ") * "}"
 
@@ -786,9 +786,9 @@ function detect_loops(g::DirectedGraph; debug=false)
     visited_vertices = repmat([false], g.n)
     visited_edges = repmat([false], g.m)
     label = 1
-    stack = []
+    stack = Int[]
     in_stack = repmat([false], g.n)
-    loops = []
+    loops = Array{Int, 1}[]
     str_stack() = "[" * join(["v$v" for v in reverse(stack)], ", ") * "]"
     str_loop(l) = "{" * join(["v$v" for v in l], " -> ") * "}"
     
@@ -1031,10 +1031,10 @@ test2()
 # println(detect_loops(g2, debug=true))
 
 
-# e3 = [(1, 2), (2, 3), (1, 4), (3, 5), (2, 5), (3, 4), (4, 5)]
-# g3 = UndirectedGraph(e3)
-# println(detect_loops(g3, debug=true))
-
+e3 = [(1, 2), (2, 3), (1, 4), (3, 5), (2, 5), (3, 4), (4, 5)]
+g3 = UndirectedGraph(e3)
+#println(detect_loops(g3, debug=true))
+println(str(detect_loops(g3)))
 # e4 = [(1, 2), (1, 3), (1, 4), (3, 5), (5, 6), (3, 6), (5, 7), (2, 3),
 #       (2, 4), (2, 8), (2, 9), (8, 9), (4, 10), (10, 11), (4, 11), (4, 12)]
 # u4 = UndirectedGraph(e4)

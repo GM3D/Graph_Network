@@ -1,5 +1,3 @@
-import GR
-
 include("chapter2.jl")
 using GR
 
@@ -37,9 +35,22 @@ function plot_graph(g::DirectedGraph)
             GR.text(pos[i][1] - tw, pos[i][2] - oy - th , "$(g.labels[i])")
         end
     end
-    GR.show()
+    GR.updatews()
 end
 
+@doc """
+input(prompt::String="")::String
+
+    Read a string from STDIN. The trailing newline is stripped.
+    The prompt string, if given, is printed to standard output without a
+    trailing newline before reading input.
+    cited from SalchiPapa's answer on stack overflow, 
+    https://stackoverflow.com/questions/17479782/julia-request-user-input-from-script#17480813"""
+
+function input(prompt::String="")::String
+    print(prompt)
+    return chomp(readline())
+end
 
 function testplot()
     e1 = [(1, 2), (1, 5), (2, 6), (6, 5), (4, 1), (5, 4), (3, 6),
@@ -47,6 +58,8 @@ function testplot()
     g1 = DirectedGraph(e1)
     dfs_stack!(g1)
     plot_graph(g1)
+    while((a = input("type q to quit.")) != "q")
+    end
 end
 
 testplot()

@@ -170,24 +170,30 @@ end
 
 
 function test1()
-    e1 = [(1, 2), (1, 5), (6, 2), (6, 5), (4, 1), (5, 4), (3, 6), (2, 3), (4, 3)]
+    # テキスト p. 26 図2.1の有向グラフ
+    e1 = [(1, 2), (1, 5), (6, 2), (6, 5), (4, 1), (5, 4), (3, 6),
+          (2, 3), (4, 3)]
+    # エッジリストから無向グラフ生成
     u1 = UndirectedGraph(e1)
+    # エッジリストから有向グラフ生成
     g1 = DirectedGraph(e1)
+    # オブジェクト表示
     println("Undirected graph")
     println(u1)
     println("Directed graph")
     println(g1)
+    # 無向グラフを有向グラフに変換
     println("Directed Graph converted from undirected one")
     g11 = DirectedGraph(u1)
     print(g11)
+    # 有向グラフを無向グラフに変換
     println("Undirected Graph converted from directed one")
     u11 = UndirectedGraph(g1)
     print(u11)
     
     
-    
     e2 = [(1, 2), (1, 3), (1, 4), (3, 5), (5, 6), (3, 6), (5, 7), (2, 3),
-          (2, 4), (4, 8), (8, 9), (4, 9), (4, 10)]
+          (2, 4), (2, 8), (2, 9), (8, 9), (4, 10), (4, 11), (4, 12), (10, 11)]
     u2 = UndirectedGraph(e2)
     g2 = DirectedGraph(e2)
     println("Undirected Graph")
