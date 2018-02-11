@@ -124,13 +124,30 @@ type DirectedGraph
     end
 
     function DirectedGraph(n::Int, m::Int)
+        if(m > n*(n - 1)/2)
+            error("m must be less than or equal n*(n - 1)/2")
+        end
         edges = []
         edges_from = [Int[] for i in 1:n]
         edges_to = [Int[] for i in 1:n]
         for i in 1:m
-            push!(edges, (rand(1:n), rand(1:n)))
+            u = rand(1:n)
+            # avoid self loops
+            if u == 1
+                v = rand(2:n)
+            elseif u == n
+                v = rand(1:n-1)
+            else
+                v = rand(append!(collect(1:u-1), collect(u+1:n)))
+            end
+            # avoid pararell edges
+            while (u, v) in edges
+                u, v = rand(1:n), rand(1:n)
+            end
+            push!(edges, (u, v))
         end
         for i in 1:m
+            print(edges[i])
             tail, head = edges[i]
             push!(edges_from[tail], i)
             push!(edges_to[head], i)
@@ -191,7 +208,7 @@ function test1()
     u11 = UndirectedGraph(g1)
     print(u11)
     
-    
+    # テキスト p. 43 図2.9の無向グラフ
     e2 = [(1, 2), (1, 3), (1, 4), (3, 5), (5, 6), (3, 6), (5, 7), (2, 3),
           (2, 4), (2, 8), (2, 9), (8, 9), (4, 10), (4, 11), (4, 12), (10, 11)]
     u2 = UndirectedGraph(e2)
@@ -207,6 +224,8 @@ function test1()
     u22 = UndirectedGraph(g2)
     print(u22)
 
+    # 頂点数と辺数だけ指定してグラフを生成
+    # 辺はランダムに頂点を選んで結ぶ
     g3 = DirectedGraph(5, 8)
     print(g3)
     u3 = UndirectedGraph(5, 8)
